@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SceneComponent.h"
 #include "Gun.h"
 
 // Sets default values
@@ -19,8 +20,8 @@ ASPawn::ASPawn()
 	CameraComponent->SetupAttachment(GetCapsuleComponent());
 	CameraComponent->bUsePawnControlRotation = true;
 
-	GunAttachPoint = CreateDefaultSubobject<UCameraComponent>(TEXT("GunAttachPoint"));
-	GunAttachPoint->SetupAttachment(GetCapsuleComponent());
+	GunAttachPoint = CreateDefaultSubobject<USceneComponent>(TEXT("GunAttachPoint"));
+	GunAttachPoint->SetupAttachment(CameraComponent);
 
 	HealthComp = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComp"));
 }
@@ -108,7 +109,24 @@ FVector ASPawn::GetPawnViewLocation() const
 
 void ASPawn::Use()
 {
+	if (CurrentNearbyGun)
+	{
+		if (CurrentGun)
+		{
+			CurrentGun->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			CurrentGun->SetActorLocation(FVector(GetActorLocation().X + 200.f, GetActorLocation().Y, GetActorLocation().Z));
 
+			CurrentNearbyGun->AttachToComponent(GunAttachPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			CurrentGun = CurrentNearbyGun;
+			CurrentGun->SetOwner(this);
+		}
+		else
+		{
+			CurrentNearbyGun->AttachToComponent(GunAttachPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+			CurrentGun = CurrentNearbyGun;
+			CurrentGun->SetOwner(this);
+		}
+	}
 }
 
 void ASPawn::Shoot()

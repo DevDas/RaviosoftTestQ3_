@@ -6,12 +6,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "RaviosoftTestQ3/RaviosoftTestQ3.h"
 #include "DrawDebugHelpers.h"
+#include "SPawn.h"
 
 // Sets default values
 AGun::AGun()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComp"));
 	RootComponent = CollisionComp;
@@ -25,13 +26,8 @@ void AGun::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-// Called every frame
-void AGun::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AGun::OnOverlapBegin);
+	CollisionComp->OnComponentEndOverlap.AddDynamic(this, &AGun::OnOverlapEnd);
 }
 
 void AGun::Shoot()
@@ -80,11 +76,30 @@ void AGun::ShootWithLineTrace()
 				DamageType);
 		}
 
-		DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::Red, false, 1.f, 0, 1.0f);
+		DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::Red, false, 10.f, 0, 1.0f);
 	}
 }
 
 void AGun::ShootWithProjectile()
 {
 
+}
+
+void AGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	ASPawn* Pawn{ Cast<ASPawn>(OtherActor) };
+	if (Pawn)
+	{
+		Pawn->CurrentNearbyGun = this;
+	}
+}
+
+void AGun::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	ASPawn* Pawn{ Cast<ASPawn>(OtherActor) };
+	if (Pawn)
+	{
+		//Pawn->CurrentNearbyGun = nullptr;
+	}
 }

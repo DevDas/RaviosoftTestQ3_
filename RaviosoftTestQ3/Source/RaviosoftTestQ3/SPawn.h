@@ -37,6 +37,9 @@ public:
 
 	virtual FVector GetPawnViewLocation() const override;
 
+	class AGun* CurrentGun = nullptr;
+	class AGun* CurrentNearbyGun = nullptr;
+
 private:
 
 	void MoveForward(float Val);
@@ -44,6 +47,4 @@ private:
 
 	void Use();
 	void Shoot();
-
-	class AGun* CurrentGun = nullptr;
 };
