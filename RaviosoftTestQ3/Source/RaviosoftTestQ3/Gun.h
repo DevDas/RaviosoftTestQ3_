@@ -33,6 +33,7 @@ public:
 
 	void ShootWithLineTrace();
 	void ShootWithProjectile();
+	void ResetNearbyGun();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		class USphereComponent* CollisionComp;
@@ -56,4 +57,6 @@ public:
 
 	UFUNCTION()
 		void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	class ASPawn* Pawn = nullptr;
 };

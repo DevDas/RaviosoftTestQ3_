@@ -14,11 +14,11 @@ AGun::AGun()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComp"));
-	RootComponent = CollisionComp;
-
 	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
-	GunMesh->AttachTo(CollisionComp);
+	RootComponent = GunMesh;
+
+	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComp"));
+	CollisionComp->AttachTo(GunMesh);
 }
 
 // Called when the game starts or when spawned
@@ -88,18 +88,27 @@ void AGun::ShootWithProjectile()
 void AGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ASPawn* Pawn{ Cast<ASPawn>(OtherActor) };
-	if (Pawn)
+	ASPawn* MyPawn{ Cast<ASPawn>(OtherActor) };
+	if (MyPawn)
 	{
-		Pawn->CurrentNearbyGun = this;
+		MyPawn->CurrentNearbyGun = this;
 	}
 }
 
 void AGun::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	ASPawn* Pawn{ Cast<ASPawn>(OtherActor) };
+	Pawn = Cast<ASPawn>(OtherActor);
 	if (Pawn)
 	{
-		//Pawn->CurrentNearbyGun = nullptr;
+		FTimerHandle Handle_ResetNearbyGun;
+		GetWorld()->GetTimerManager().SetTimer(Handle_ResetNearbyGun, this, &AGun::ResetNearbyGun, 0.5f, false);
+	}
+}
+
+void AGun::ResetNearbyGun()
+{
+	if (Pawn)
+	{
+		Pawn->CurrentNearbyGun = nullptr;
 	}
 }

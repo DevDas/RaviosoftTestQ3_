@@ -114,17 +114,22 @@ void ASPawn::Use()
 		if (CurrentGun)
 		{
 			CurrentGun->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			CurrentGun->SetActorLocation(FVector(GetActorLocation().X + 200.f, GetActorLocation().Y, GetActorLocation().Z));
+			CurrentGun->SetActorLocation(FVector(GetPawnViewLocation().X + 200.f, GetPawnViewLocation().Y, GetPawnViewLocation().Z));
+			EnableCollision(CurrentGun);
 
+			DisableCollision(CurrentNearbyGun);
 			CurrentNearbyGun->AttachToComponent(GunAttachPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 			CurrentGun = CurrentNearbyGun;
 			CurrentGun->SetOwner(this);
+			CurrentNearbyGun = nullptr;
 		}
 		else
 		{
+			DisableCollision(CurrentNearbyGun);
 			CurrentNearbyGun->AttachToComponent(GunAttachPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 			CurrentGun = CurrentNearbyGun;
 			CurrentGun->SetOwner(this);
+			CurrentNearbyGun = nullptr;
 		}
 	}
 }
@@ -134,5 +139,23 @@ void ASPawn::Shoot()
 	if (CurrentGun)
 	{
 		CurrentGun->Shoot();
+	}
+}
+
+void ASPawn::DisableCollision(AGun* GunRef)
+{
+	if (GunRef && GunRef->GunMesh)
+	{
+		//GunRef->GunMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GunRef->GunMesh->SetSimulatePhysics(false);
+	}
+}
+
+void ASPawn::EnableCollision(AGun* GunRef)
+{
+	if (GunRef && GunRef->GunMesh)
+	{
+		//GunRef->GunMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		GunRef->GunMesh->SetSimulatePhysics(true);
 	}
 }
