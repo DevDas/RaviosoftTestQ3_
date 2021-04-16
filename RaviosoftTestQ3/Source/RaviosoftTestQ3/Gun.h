@@ -63,10 +63,11 @@ public:
 	UPROPERTY(EditAnywhere)
 		UClass* ProjectileBlueprint;
 
-	FVector TraceEndProjectile;
-
 	UPROPERTY(EditAnywhere, Category = "FX")
 		class UParticleSystem* ImpactBlast = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+		class UParticleSystem* MuzzleBlast = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
 		class USoundBase* SoundCueClass;

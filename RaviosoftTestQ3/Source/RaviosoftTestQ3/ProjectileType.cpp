@@ -15,7 +15,7 @@
 AProjectileType::AProjectileType()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComp"));
 	RootComponent = CollisionComp;
@@ -34,13 +34,6 @@ void AProjectileType::BeginPlay()
 	CollisionComp->OnComponentHit.AddDynamic(this, &AProjectileType::OnHit);
 }
 
-// Called every frame
-void AProjectileType::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void AProjectileType::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
@@ -49,14 +42,10 @@ void AProjectileType::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 	}
 	
-	UGameplayStatics::ApplyRadialDamage(
-		this,
-		ProjectileDamage,
-		GetActorLocation(),
-		150.f, 
-		UDamageType::StaticClass(),
-		TArray<AActor*>() // damage all actor thats why its empty
-	);
+	if (GetOwner())
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, ProjectileDamage, GetOwner()->GetInstigatorController(), GetOwner(), DamageType);
+	}
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactBlast, GetActorLocation());
 	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), SoundCueClass, GetActorLocation());

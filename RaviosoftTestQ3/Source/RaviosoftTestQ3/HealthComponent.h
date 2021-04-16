@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RAVIOSOFTTESTQ3_API UHealthComponent : public UActorComponent
@@ -16,6 +17,9 @@ public:
 	// Sets default values for this component's properties
 	UHealthComponent();
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+		FOnDeath OnDeath;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -24,14 +28,10 @@ protected:
 		void HandleTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
 		float Health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
-		float DefaultHealth;
-
-	bool bIsDead;
+		float DefaultHealth = 100.f;
 };

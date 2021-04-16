@@ -15,6 +15,12 @@ public:
 	// Sets default values for this actor's properties
 	AAIGun();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+		class UStaticMeshComponent* BaseMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+		class UStaticMeshComponent* TurretMesh;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

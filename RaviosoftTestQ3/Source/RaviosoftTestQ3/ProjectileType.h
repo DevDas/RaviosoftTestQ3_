@@ -29,12 +29,12 @@ protected:
 		class UProjectileMovementComponent* ProjectileMovementComp;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+		TSubclassOf<class UDamageType> DamageType;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 		float ProjectileDamage = 20.f;
