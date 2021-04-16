@@ -34,4 +34,15 @@ public:
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+		float ProjectileDamage = 20.f;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+		class UParticleSystem* ImpactBlast = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	class USoundBase* SoundCueClass;
+
 };

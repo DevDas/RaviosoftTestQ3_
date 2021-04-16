@@ -7,6 +7,9 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+#include "Sound/SoundBase.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AProjectileType::AProjectileType()
@@ -46,9 +49,17 @@ void AProjectileType::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 	}
 	
-	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
-	//UGameplayStatics::SpawnSoundAtLocation(GetWorld(),)
+	UGameplayStatics::ApplyRadialDamage(
+		this,
+		ProjectileDamage,
+		GetActorLocation(),
+		150.f, 
+		UDamageType::StaticClass(),
+		TArray<AActor*>() // damage all actor thats why its empty
+	);
 
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactBlast, GetActorLocation());
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), SoundCueClass, GetActorLocation());
+	
 	Destroy();
-
 }

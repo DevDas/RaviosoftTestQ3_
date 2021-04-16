@@ -59,4 +59,18 @@ public:
 		void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	class ASPawn* Pawn = nullptr;
+
+	UPROPERTY(EditAnywhere)
+		UClass* ProjectileBlueprint;
+
+	FVector TraceEndProjectile;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+		class UParticleSystem* ImpactBlast = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+		class USoundBase* SoundCueClass;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+		class USoundBase* GSoundCueClass;
 };

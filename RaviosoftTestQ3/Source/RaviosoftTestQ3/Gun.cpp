@@ -7,6 +7,9 @@
 #include "RaviosoftTestQ3/RaviosoftTestQ3.h"
 #include "DrawDebugHelpers.h"
 #include "SPawn.h"
+#include "ProjectileType.h"
+#include "Sound/SoundBase.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AGun::AGun()
@@ -18,7 +21,7 @@ AGun::AGun()
 	RootComponent = GunMesh;
 
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComp"));
-	CollisionComp->AttachTo(GunMesh);
+	CollisionComp->AttachToComponent(GunMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 }
 
 // Called when the game starts or when spawned
@@ -53,6 +56,7 @@ void AGun::ShootWithLineTrace()
 		FVector ShotDirection = EyeRotation.Vector();
 
 		FVector TraceEnd = EyeLocation + (ShotDirection * 10000);
+		TraceEndProjectile = TraceEnd;
 
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(MyOwner);
@@ -74,6 +78,9 @@ void AGun::ShootWithLineTrace()
 				MyOwner->GetInstigatorController(),
 				MyOwner,
 				DamageType);
+
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactBlast, TraceEnd);
+			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), SoundCueClass, GetActorLocation());
 		}
 
 		DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::Red, false, 10.f, 0, 1.0f);
@@ -82,7 +89,14 @@ void AGun::ShootWithLineTrace()
 
 void AGun::ShootWithProjectile()
 {
+	FRotator Rotation = (GunMesh->GetSocketLocation(FName("Projectile")) - TraceEndProjectile).Rotation();
+	AProjectileType* Projectile = GetWorld()->SpawnActor<AProjectileType>(
+		ProjectileBlueprint,										
+		GunMesh->GetSocketLocation(FName("Projectile")), Rotation
+		/*GunMesh->GetSocketRotation(FName("Projectile"))*/
+		);
 
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), GSoundCueClass, GetActorLocation());
 }
 
 void AGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

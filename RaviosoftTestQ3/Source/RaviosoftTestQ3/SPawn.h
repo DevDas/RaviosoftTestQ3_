@@ -40,10 +40,6 @@ public:
 	class AGun* CurrentGun = nullptr;
 	class AGun* CurrentNearbyGun = nullptr;
 
-	void DisableCollision(AGun* GunRef);
-	void EnableCollision(AGun* GunRef);
-
-
 private:
 
 	void MoveForward(float Val);
