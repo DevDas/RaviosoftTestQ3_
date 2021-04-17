@@ -34,36 +34,32 @@ void AAIGun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// TODO Check If In Range , Then Shoot
-
-	if (bGameOver) return;
-
 	if (HealthComp && GetPercentage() > 0.f)
 	{
 		ASPawn* PlayerPawn = Cast<ASPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
 		if (PlayerPawn)
 		{
-			if (PlayerPawn->GetPercentage() <= 0.f) // Don't Fire If Player Already Died
+			bGameOver = PlayerPawn->GetPercentage() <= 0.f;
+			if (!bGameOver)
 			{
-				bGameOver = true;
-				ClearTimer();
-				bCanFire = false;
-				return;
-			}
+				if ((PlayerPawn->GetActorLocation() - GetActorLocation()).Size() <= AIRange)
+				{
+					FRotator Rotation = (PlayerPawn->GetActorLocation() - GetActorLocation()).Rotation();
+					if (TurretMesh)
+					{
+						TurretMesh->SetWorldRotation(Rotation);
+					}
 
-			if ((PlayerPawn->GetActorLocation() - GetActorLocation()).Size() <= AIRange)
-			{
-				FRotator Rotation = (PlayerPawn->GetActorLocation() - GetActorLocation()).Rotation();
-				if (TurretMesh)
-				{
-					TurretMesh->SetWorldRotation(Rotation);
+					if (bCanFire)
+					{
+						bCanFire = false;
+						GetWorld()->GetTimerManager().SetTimer(Handle_Fire, this, &AAIGun::Fire, 2.f, true);
+					}
 				}
-				
-				if (bCanFire)
+				else
 				{
-					bCanFire = false;
-					GetWorld()->GetTimerManager().SetTimer(Handle_Fire, this, &AAIGun::Fire, 2.f, true);
+					ClearTimer();
 				}
 			}
 			else

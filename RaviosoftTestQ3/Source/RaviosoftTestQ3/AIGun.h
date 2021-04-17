@@ -49,6 +49,7 @@ public:
 
 	void ClearTimer();
 
+	UPROPERTY(BlueprintReadOnly)
 	bool bGameOver = false;
 		
 	UFUNCTION(BlueprintCallable)
