@@ -42,6 +42,8 @@ void AGun::Shoot()
 		break;
 	case Projectile : ShootWithProjectile();
 		break;
+	case None : // No Gun
+		break;
 	}
 }
 

@@ -34,4 +34,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
 		float DefaultHealth = 100.f;
+
+	bool bIsDead;
+
+	float GetPercentage()
+	{
+		return (Health / DefaultHealth);
+	};
 };

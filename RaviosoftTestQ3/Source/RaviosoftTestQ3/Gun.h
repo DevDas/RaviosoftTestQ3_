@@ -9,6 +9,8 @@
 UENUM(BlueprintType)
 enum EShootType
 {
+	None,
+
 	LineTrace,
 
 	Projectile

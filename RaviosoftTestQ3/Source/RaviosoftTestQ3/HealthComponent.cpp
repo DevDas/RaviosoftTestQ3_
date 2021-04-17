@@ -26,11 +26,12 @@ void UHealthComponent::BeginPlay()
 void UHealthComponent::HandleTakeAnyDamage(AActor* DamagedActor, float Damage,
 	const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (Damage <= 0.f) return;
+	if (Damage <= 0.f || Health <=0.f) return;
 
 	Health = FMath::Clamp(Health - Damage, 0.f, DefaultHealth);
 	if (Health <= 0.f)
 	{
+		bIsDead = true;
 		OnDeath.Broadcast();
 	}
 }

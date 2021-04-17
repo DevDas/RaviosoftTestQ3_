@@ -21,6 +21,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		class UStaticMeshComponent* TurretMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+		class UStaticMeshComponent* TurretPipe;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,4 +34,23 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void Fire();
+
+	UPROPERTY(EditAnywhere)
+		float AIRange = 1000.f;
+
+	bool bCanFire = true;
+
+	UPROPERTY(EditAnywhere)
+		UClass* ProjectileBlueprint;
+
+	FTimerHandle Handle_Fire;
+
+	void ClearTimer();
+
+	bool bGameOver = false;
+		
+	UFUNCTION(BlueprintCallable)
+		float GetPercentage();
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Gun.h"
 #include "SPawn.generated.h"
 
 UCLASS()
@@ -14,6 +15,11 @@ class RAVIOSOFTTESTQ3_API ASPawn : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ASPawn();
+
+	class UHealthComponent* GetHealthComp()
+	{
+		return HealthComp;
+	};
 
 protected:
 	// Called when the game starts or when spawned
@@ -37,8 +43,28 @@ public:
 
 	virtual FVector GetPawnViewLocation() const override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AGun* CurrentGun = nullptr;
+
 	class AGun* CurrentNearbyGun = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		int32 TotalGLAmmo = 20;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		int32 TotalPistolAmmo = 30;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		int32 CurrentAmmo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Shoot")
+		TEnumAsByte<EShootType> GunType = EShootType::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+		int32 Score;
+
+	UFUNCTION(BlueprintCallable)
+		float GetPercentage();
 
 private:
 
@@ -47,4 +73,7 @@ private:
 
 	void Use();
 	void Shoot();
+
+	void UpdateCurrentAmmo();
+	void DecreaseAmmo();
 };

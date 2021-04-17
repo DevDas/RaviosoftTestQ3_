@@ -9,7 +9,6 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SceneComponent.h"
-#include "Gun.h"
 
 // Sets default values
 ASPawn::ASPawn()
@@ -122,6 +121,7 @@ void ASPawn::Use()
 			CurrentGun = CurrentNearbyGun;
 			CurrentGun->SetOwner(this);
 			CurrentNearbyGun = nullptr;
+			UpdateCurrentAmmo();
 		}
 		else
 		{
@@ -130,6 +130,7 @@ void ASPawn::Use()
 			CurrentGun = CurrentNearbyGun;
 			CurrentGun->SetOwner(this);
 			CurrentNearbyGun = nullptr;
+			UpdateCurrentAmmo();
 		}
 	}
 }
@@ -138,6 +139,57 @@ void ASPawn::Shoot()
 {
 	if (CurrentGun)
 	{
-		CurrentGun->Shoot();
+		if (CurrentAmmo > 0)
+		{
+			DecreaseAmmo();
+			CurrentGun->Shoot();
+		}
 	}
+}
+
+void ASPawn::UpdateCurrentAmmo()
+{
+	if (CurrentGun)
+	{
+		GunType = CurrentGun->ShootType;
+
+		if (CurrentGun->ShootType == EShootType::LineTrace)
+		{
+			CurrentAmmo = TotalPistolAmmo;
+		}
+		else if (CurrentGun->ShootType == EShootType::Projectile)
+		{
+			CurrentAmmo = TotalGLAmmo;
+		}
+		else
+		{
+			CurrentAmmo = 0;
+		}
+	}
+}
+
+void ASPawn::DecreaseAmmo()
+{
+	if (CurrentGun)
+	{
+		if (CurrentGun->ShootType == EShootType::LineTrace)
+		{
+			--TotalPistolAmmo;
+			CurrentAmmo = TotalPistolAmmo;
+		}
+		else if (CurrentGun->ShootType == EShootType::Projectile)
+		{
+			--TotalGLAmmo;
+			CurrentAmmo = TotalGLAmmo;
+		}
+		else
+		{
+			CurrentAmmo = 0;
+		}
+	}
+}
+
+float ASPawn::GetPercentage()
+{
+	return HealthComp->GetPercentage();
 }
